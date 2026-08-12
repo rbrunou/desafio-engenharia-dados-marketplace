@@ -1,0 +1,24 @@
+# Enunciado do teste (material proprietário do processo seletivo)
+Teste/
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# Bancos locais gerados durante a análise
+*.db
+*.sqlite
+*.sqlite3
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini

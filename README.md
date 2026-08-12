@@ -59,15 +59,15 @@ Tempo de execução completo: **~10 segundos**.
 ```
 .
 ├── README.md
+├── .gitignore
 ├── desafio_engenharia_dados.ipynb   # resolução completa
-├── dados/                           # CSVs de origem
-│   ├── buyers.csv        (3.001 linhas)
-│   ├── order_items.csv   (214.768 linhas)
-│   ├── orders.csv        (80.002 linhas)
-│   ├── payments.csv      (80.000 linhas)
-│   ├── products.csv      (800 linhas)
-│   └── sellers.csv       (120 linhas)
-└── Teste/                           # enunciado e notebook modelo
+└── dados/                           # CSVs de origem
+    ├── buyers.csv        (3.001 linhas)
+    ├── order_items.csv   (214.768 linhas)
+    ├── orders.csv        (80.002 linhas)
+    ├── payments.csv      (80.000 linhas)
+    ├── products.csv      (800 linhas)
+    └── sellers.csv       (120 linhas)
 ```
 
 **Stack:** `pandas` + `pandasql` (SQLite como motor SQL sobre os DataFrames), conforme o
