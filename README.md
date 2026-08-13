@@ -1,4 +1,4 @@
-# Desafio Técnico — Engenharia de Dados
+# Desafio Técnico - Engenharia de Dados
 
 Resolução dos quatro desafios SQL do teste, sobre a base de um marketplace B2B de
 alimentos (80 mil pedidos, 214 mil itens).
@@ -11,7 +11,7 @@ executar nada.
 ## Como rodar
 
 **Google Colab:** suba os 6 CSVs da pasta `dados/` para `/content`, descomente a célula
-`!pip install -q pandasql` e execute tudo (`Ambiente de execução → Executar tudo`).
+`!pip install -q pandasql` e execute tudo (Ambiente de execução, Executar tudo).
 
 **Local:**
 
@@ -21,7 +21,8 @@ jupyter notebook desafio_engenharia_dados.ipynb
 ```
 
 O notebook procura os CSVs sozinho em `dados/`, `../dados`, `/content` e
-`/content/dados` — não precisa ajustar caminho. Para executar sem abrir a interface:
+`/content/dados`, então não precisa ajustar caminho. Para executar sem abrir a
+interface:
 
 ```bash
 jupyter nbconvert --to notebook --execute --inplace desafio_engenharia_dados.ipynb
@@ -50,7 +51,7 @@ modelo do enunciado.
 
 ## O caminho da análise
 
-Antes dos desafios, o notebook faz uma auditoria da base — o que encontrei ali muda a
+Antes dos desafios, o notebook faz uma auditoria da base. O que encontrei ali muda a
 forma correta de escrever praticamente todas as queries:
 
 - **A base é um snapshot que termina em 29/11/2024.** Janela de "últimos N meses"
@@ -58,32 +59,24 @@ forma correta de escrever praticamente todas as queries:
   dados (com o ponto de troca para produção comentado).
 - **Há 2 pedidos com `id` duplicado** (cara de reingestão). Todas as queries deduplicam
   com `ROW_NUMBER()`, ficando com a versão mais recente.
-- **Integridade referencial ok** — nenhuma chave órfã, nenhum pedido sem item.
+- **Integridade referencial ok**: nenhuma chave órfã, nenhum pedido sem item.
 - **Status de pedido e de pagamento são 100% consistentes**, então filtrar por
   `orders.status` basta para faturamento (verifiquei antes de descartar o join com
   `payments`).
 - **`orders.total_value` já é líquido de desconto.** Serve de fonte confiável para
-  faturamento e GMV — e é exatamente o campo errado para o desafio dos descontos, que
+  faturamento e GMV, e é exatamente o campo errado para o desafio dos descontos, que
   pede o valor bruto.
 
 ## Resultados em uma linha cada
 
 | Desafio | Resposta | O que apareceu no caminho |
 |---|---|---|
-| 1 — Faturamento mensal | R$ 715,6 mi em 12 meses (45.191 pedidos) | O relatório sem filtro de status inflava o número em **32,8%**; e "tirar cancelados" ≠ "só completed/delivered" — há R$ 94 mi em `processing` no meio |
-| 2 — Crescimento de GMV | Top 10 com líder a **+69,35%** (Q3 vs Q2/2024) | O "trimestre atual" da base é parcial; compará-lo zeraria todo crescimento positivo e inverteria o ranking |
-| 3 — Descontos abusivos | **901 pedidos**, todos de **8 dos 120 sellers** | Os descontos têm duas populações separadas por um vazio (nada entre 15% e 35%); 4 dos 8 sellers estão no top 10 do desafio 2 — o "crescimento" deles é desconto virando GMV |
-| 4 — Produto nunca protagonista | **Zero produtos — e zero é a resposta certa** | `unit_price` muda a cada venda (267,7 preços distintos por produto): sem identidade de preço, o produto descrito no enunciado não pode existir nesta base |
+| 1 - Faturamento mensal | R$ 715,6 mi em 12 meses (45.191 pedidos) | O relatório sem filtro de status inflava o número em **32,8%**; e "tirar cancelados" não é o mesmo que "só completed/delivered": há R$ 94 mi em `processing` no meio |
+| 2 - Crescimento de GMV | Top 10 com líder a **+69,35%** (Q3 vs Q2/2024) | O "trimestre atual" da base é parcial; compará-lo zeraria todo crescimento positivo e inverteria o ranking |
+| 3 - Descontos abusivos | **901 pedidos**, todos de **8 dos 120 sellers** | Os descontos têm duas populações separadas por um vazio (nada entre 15% e 35%); 4 dos 8 sellers estão no top 10 do desafio 2, ou seja, o "crescimento" deles é desconto virando GMV |
+| 4 - Produto nunca protagonista | **Zero produtos, e zero é a resposta certa** | `unit_price` muda a cada venda (267,7 preços distintos por produto): sem identidade de preço, o produto descrito no enunciado não pode existir nesta base |
 
-As decisões de modelagem — por que competência e não caixa, por que `RANK()` e não
+As decisões de modelagem (por que competência e não caixa, por que `RANK()` e não
 `ROW_NUMBER()`, qual denominador usar no desconto, como detectar o último trimestre
-completo sem cravar data — estão discutidas no notebook, junto das queries de validação
+completo sem cravar data) estão discutidas no notebook, junto das queries de validação
 que sustentam cada escolha.
-
-## Uma nota sobre a base
-
-Vários padrões sugerem dado sintético: faturamento estável demais (12 meses sem
-sazonalidade nem tendência), descontos em dois regimes uniformes com um vazio absoluto
-entre eles, e preço independente tanto do produto quanto do custo cadastrado
-(markup de −97,5% a +23.935%). Nada disso invalida os exercícios, mas eu confirmaria
-antes de levar qualquer número daqui para decisão real.
